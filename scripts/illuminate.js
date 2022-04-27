@@ -159,8 +159,8 @@ class GlApp {
             //
             // TODO: properly select shader here
             //
-            let selected_shader = 'emissive';
-            this.gl.useProgram(this.shader[selected_shader].program);
+            let selected_shader = this.algorithm;
+            this.gl.useProgram(this.shader[selected_shader]);
 
             // transform model to proper position, size, and orientation
             glMatrix.mat4.identity(this.model_matrix);
@@ -186,7 +186,7 @@ class GlApp {
 
         // draw all light sources
         for (let i = 0; i < this.scene.light.point_lights.length; i ++) {
-            this.gl.useProgram(this.shader['emissive'].program);
+            this.gl.useProgram(this.shader['emissive']);
 
             glMatrix.mat4.identity(this.model_matrix);
             glMatrix.mat4.translate(this.model_matrix, this.model_matrix, this.scene.light.point_lights[i].position);
