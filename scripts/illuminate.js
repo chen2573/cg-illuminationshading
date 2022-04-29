@@ -16,7 +16,8 @@ class GlApp {
             gouraud_color: null,                     // (vertex shader + fragment shader) and its
             gouraud_texture: null,                   // corresponding uniform variables
             phong_color: null,
-            phong_texture: null
+            phong_texture: null,
+            emissive: null
         };
 
         this.vertex_position_attrib = 0;             // vertex attribute 0: 3D position
@@ -159,8 +160,17 @@ class GlApp {
             //
             // TODO: properly select shader here
             //
-            let selected_shader = this.algorithm;
-            this.gl.useProgram(this.shader[selected_shader]);
+            let selected_shader;
+
+            if (this.algorithm == "gouraud")
+            {
+                selected_shader = "gouraud_color";
+            }
+            else
+            {
+                selected_shader = "phong_color";
+            }
+            this.gl.useProgram(this.shader[selected_shader].program);
 
             // transform model to proper position, size, and orientation
             glMatrix.mat4.identity(this.model_matrix);
@@ -186,7 +196,7 @@ class GlApp {
 
         // draw all light sources
         for (let i = 0; i < this.scene.light.point_lights.length; i ++) {
-            this.gl.useProgram(this.shader['emissive']);
+            this.gl.useProgram(this.shader['emissive'].program);
 
             glMatrix.mat4.identity(this.model_matrix);
             glMatrix.mat4.translate(this.model_matrix, this.model_matrix, this.scene.light.point_lights[i].position);
