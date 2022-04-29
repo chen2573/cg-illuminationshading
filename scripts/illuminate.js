@@ -157,9 +157,7 @@ class GlApp {
         for (let i = 0; i < this.scene.models.length; i ++) {
             if (this.vertex_array[this.scene.models[i].type] == null) continue;
             
-            //
-            // TODO: properly select shader here
-            //
+            // properly select shader here
             let selected_shader;
 
             if (this.algorithm == "gouraud")
@@ -180,10 +178,25 @@ class GlApp {
             glMatrix.mat4.rotateX(this.model_matrix, this.model_matrix, this.scene.models[i].rotate_x);
             glMatrix.mat4.scale(this.model_matrix, this.model_matrix, this.scene.models[i].size);
 
+
+            //set uniforms accordingly
             this.gl.uniform3fv(this.shader[selected_shader].uniforms.material_color, this.scene.models[i].material.color);
             this.gl.uniformMatrix4fv(this.shader[selected_shader].uniforms.projection_matrix, false, this.projection_matrix);
             this.gl.uniformMatrix4fv(this.shader[selected_shader].uniforms.view_matrix, false, this.view_matrix);
             this.gl.uniformMatrix4fv(this.shader[selected_shader].uniforms.model_matrix, false, this.model_matrix);
+
+            if (this.algorithm == "gouraud")
+            {
+                this.gl.uniform3fv(this.shader[selected_shader].uniforms.material_specular, this.scene.models[i].material.specular);
+                this.gl.uniform3fv(this.shader[selected_shader].uniforms.light_ambient, this.scene.light.ambient);
+                this.gl.uniform3fv(this.shader[selected_shader].uniforms.camera_position, this.scene.camera.position);
+                this.gl.uniform1f(this.shader[selected_shader].uniforms.material_shininess, this.scene.models[i].material.shininess);
+                for (let j = 0; j < this.scene.light.point_lights.length; j ++)
+                {
+                    this.gl.uniform3fv(this.shader[selected_shader].uniforms.light_position, this.scene.light.point_lights[j].position);
+                    this.gl.uniform3fv(this.shader[selected_shader].uniforms.light_color, this.scene.light.point_lights[j].color);
+                }
+            }
             
             //
             // TODO: bind proper texture and set uniform (if shader is a textured one)
