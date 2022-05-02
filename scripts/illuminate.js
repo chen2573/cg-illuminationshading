@@ -160,15 +160,25 @@ class GlApp {
             // properly select shader here
             let selected_shader;
 
-            if (this.algorithm == "gouraud")
+            if (this.algorithm == "gouraud" && this.scene.models[i].shader == 'color')
             {
                 selected_shader = "gouraud_color";
             }
-            else
+            else if (this.algorithm == "gouraud" && this.scene.models[i].shader == 'texture')
+            {
+                selected_shader = "gouraud_texture";
+            }
+            else if (this.algorithm == "phong" && this.scene.models[i].shader == 'color')
             {
                 selected_shader = "phong_color";
             }
+            else
+            {
+                selected_shader = "phong_texture";
+            }
+
             this.gl.useProgram(this.shader[selected_shader].program);
+
 
             // transform model to proper position, size, and orientation
             glMatrix.mat4.identity(this.model_matrix);
@@ -185,7 +195,7 @@ class GlApp {
             this.gl.uniformMatrix4fv(this.shader[selected_shader].uniforms.view_matrix, false, this.view_matrix);
             this.gl.uniformMatrix4fv(this.shader[selected_shader].uniforms.model_matrix, false, this.model_matrix);
 
-            if (this.algorithm == "gouraud")
+            if (selected_shader == "gouraud_color")
             {
                 this.gl.uniform3fv(this.shader[selected_shader].uniforms.material_specular, this.scene.models[i].material.specular);
                 this.gl.uniform3fv(this.shader[selected_shader].uniforms.light_ambient, this.scene.light.ambient);
@@ -197,10 +207,18 @@ class GlApp {
                     this.gl.uniform3fv(this.shader[selected_shader].uniforms.light_color, this.scene.light.point_lights[j].color);
                 }
             }
-            
-            //
-            // TODO: bind proper texture and set uniform (if shader is a textured one)
-            //
+            else if (selected_shader == "phong_color")
+            {
+                this.gl.uniform3fv(this.shader[selected_shader].uniforms.material_specular, this.scene.models[i].material.specular);
+                this.gl.uniform3fv(this.shader[selected_shader].uniforms.light_ambient, this.scene.light.ambient);
+                this.gl.uniform3fv(this.shader[selected_shader].uniforms.camera_position, this.scene.camera.position);
+                this.gl.uniform1f(this.shader[selected_shader].uniforms.material_shininess, this.scene.models[i].material.shininess);
+                for (let j = 0; j < this.scene.light.point_lights.length; j ++)
+                {
+                    this.gl.uniform3fv(this.shader[selected_shader].uniforms.light_position, this.scene.light.point_lights[j].position);
+                    this.gl.uniform3fv(this.shader[selected_shader].uniforms.light_color, this.scene.light.point_lights[j].color);
+                }
+            }
 
             this.gl.bindVertexArray(this.vertex_array[this.scene.models[i].type]);
             this.gl.drawElements(this.gl.TRIANGLES, this.vertex_array[this.scene.models[i].type].face_index_count, this.gl.UNSIGNED_SHORT, 0);
