@@ -17,7 +17,7 @@ function init() {
                         shader: 'color',
                         material: {
                             color: vec3.fromValues(0.7, 0.1, 0.1),  // red, green, blue
-                            specular: vec3.fromValues(0.0, 0.0, 0.0),  // red, green, blue
+                            specular: vec3.fromValues(0.1, 0.1, 0.1),  // red, green, blue
                             shininess: 1
                         },
                         center: vec3.fromValues(0.0, 0.0, -8.0),  // x, y, z
@@ -32,10 +32,24 @@ function init() {
                         material: {
                             color: vec3.fromValues(0.1, 0.4, 0.9),  // red, green, blue
                             specular: vec3.fromValues(1.0, 1.0, 1.0),  // red, green, blue
-                            shininess: 32
+                            shininess: 20
                         },
-                        center: vec3.fromValues(0.0, 1.0, -6.0), // x, y, z
+                        center: vec3.fromValues(-1.0, 1.0, -6.0), // x, y, z
                         size: vec3.fromValues(2.0, 2.0, 2.0),  // width, height, depth
+                        rotate_x: 0,
+                        rotate_y: 0,
+                        rotate_z: 0
+                    },
+                    {
+                        type: 'cube',
+                        shader: 'color',
+                        material: {
+                            color: vec3.fromValues(0.1, 0.4, 0.9),  // red, green, blue
+                            specular: vec3.fromValues(1.0, 1.0, 1.0),  // red, green, blue
+                            shininess: 20
+                        },
+                        center: vec3.fromValues(2.5, 1.0, -6.0), // x, y, z
+                        size: vec3.fromValues(1, 1, 1),  // width, height, depth
                         rotate_x: 0,
                         rotate_y: 0,
                         rotate_z: 0
