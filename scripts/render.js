@@ -53,6 +53,20 @@ function init() {
                         rotate_x: 0,
                         rotate_y: 0,
                         rotate_z: 0
+                    },
+                    {
+                        type: 'custom',
+                        shader: 'color',
+                        material: {
+                            color: vec3.fromValues(0.1, 0.4, 0.9),  // red, green, blue
+                            specular: vec3.fromValues(1.0, 1.0, 1.0),  // red, green, blue
+                            shininess: 20
+                        },
+                        center: vec3.fromValues(0.8, 1.0, -8.0), // x, y, z
+                        size: vec3.fromValues(1, 1, 1),  // width, height, depth
+                        rotate_x: 0,
+                        rotate_y: 0,
+                        rotate_z: 0
                     }
                 ],
                 light: {

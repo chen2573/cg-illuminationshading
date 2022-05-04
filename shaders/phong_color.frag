@@ -16,5 +16,23 @@ uniform float material_shininess; // n
 out vec4 FragColor;
 
 void main() {
-    FragColor = vec4(material_color, 1.0);
+
+    //normalized diretions and normals
+    vec3 N = frag_normal;
+    vec3 L = light_position - frag_pos;
+    float NDotL = dot(N, L);
+    if (NDotL < 0.0) {NDotL = 0.0;} //cap the dot product at 0
+
+    vec3 R = normalize(vec3(2, 2, 2) * NDotL * N - L);
+    vec3 V = normalize(camera_position - frag_pos);
+    float RDotV = dot(R, V);
+    if (RDotV < 0.0) {RDotV = 0.0;} //cap the dot product at 0
+    
+    vec3 light_diffuse = light_color * NDotL;
+    vec3 light_specular = light_color * pow(RDotV, material_shininess);
+    
+    FragColor = vec4((light_ambient * material_color) + (light_diffuse * material_color) + light_specular, 1.0);
 }
+
+    
+
