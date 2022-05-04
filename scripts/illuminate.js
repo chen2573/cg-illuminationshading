@@ -127,26 +127,38 @@ class GlApp {
         // create a texture, and upload a temporary 1px white RGBA array [255,255,255,255]
         let texture = this.gl.createTexture();
 
-        //
-        // TODO: set texture parameters and upload a temporary 1px white RGBA array [255,255,255,255]
-        // 
+        this.gl.bindTexture(this.gl.TEXTURE_2D, texture);     //bind texture
+    
+        this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MAG_FILTER, this.gl.LINEAR);
+        this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MIN_FILTER, this.gl.LINEAR);
+        this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_WRAP_S, this.gl.CLAMP_TO_EDGE);
+        this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_WRAP_T, this.gl.CLAMP_TO_EDGE);
+    
+        let pix = [255, 255, 255, 255,
+                   255, 255, 255, 255,
+                   255, 255, 255, 255,
+                   255, 255, 255, 255];   //dummy texture
+    
+        this.gl.texImage2D(this.gl.TEXTURE_2D, 0, this.gl.RGBA, 2, 2, 0, this.gl.RGBA, this.gl.UNSIGNED_BYTE, new Uint8Array(pix));  //bind dummy texture
+        this.gl.bindTexture(this.gl.TEXTURE_2D, null);    //unbind
 
         // download the actual image
         let image = new Image();
         image.crossOrigin = 'anonymous';
+        image.src = image_url;
         image.addEventListener('load', (event) => {
             // once image is downloaded, update the texture image
             this.updateTexture(texture, image);
         }, false);
-        image.src = image_url;
 
         return texture;
     }
 
-    updateTexture(texture, image_element) {
-        //
-        // TODO: update image for specified texture
-        //
+    updateTexture(texture, image_element)
+    {
+        this.gl.bindTexture(this.gl.TEXTURE_2D, texture);
+        this.gl.texImage2D(this.gl.TEXTURE_2D, 0, this.gl.RGBA, this.gl.RGBA, this.gl.UNSIGNED_BYTE, image_element);  //bind image
+        this.gl.bindTexture(this.gl.TEXTURE_2D, null);    //unbind        
     }
 
     render() {
@@ -190,34 +202,45 @@ class GlApp {
 
 
             //set uniforms accordingly
-            this.gl.uniform3fv(this.shader[selected_shader].uniforms.material_color, this.scene.models[i].material.color);
             this.gl.uniformMatrix4fv(this.shader[selected_shader].uniforms.projection_matrix, false, this.projection_matrix);
             this.gl.uniformMatrix4fv(this.shader[selected_shader].uniforms.view_matrix, false, this.view_matrix);
             this.gl.uniformMatrix4fv(this.shader[selected_shader].uniforms.model_matrix, false, this.model_matrix);
-
-            if (selected_shader == "gouraud_color")
+            
+            this.gl.uniform3fv(this.shader[selected_shader].uniforms.material_color, this.scene.models[i].material.color);
+            this.gl.uniform3fv(this.shader[selected_shader].uniforms.material_specular, this.scene.models[i].material.specular);
+            this.gl.uniform3fv(this.shader[selected_shader].uniforms.light_ambient, this.scene.light.ambient);
+            this.gl.uniform3fv(this.shader[selected_shader].uniforms.camera_position, this.scene.camera.position);
+            this.gl.uniform1f(this.shader[selected_shader].uniforms.material_shininess, this.scene.models[i].material.shininess);
+            
+            for (let j = 0; j < this.scene.light.point_lights.length; j ++)
             {
-                this.gl.uniform3fv(this.shader[selected_shader].uniforms.material_specular, this.scene.models[i].material.specular);
-                this.gl.uniform3fv(this.shader[selected_shader].uniforms.light_ambient, this.scene.light.ambient);
-                this.gl.uniform3fv(this.shader[selected_shader].uniforms.camera_position, this.scene.camera.position);
-                this.gl.uniform1f(this.shader[selected_shader].uniforms.material_shininess, this.scene.models[i].material.shininess);
-                for (let j = 0; j < this.scene.light.point_lights.length; j ++)
-                {
-                    this.gl.uniform3fv(this.shader[selected_shader].uniforms.light_position, this.scene.light.point_lights[j].position);
-                    this.gl.uniform3fv(this.shader[selected_shader].uniforms.light_color, this.scene.light.point_lights[j].color);
-                }
+                this.gl.uniform3fv(this.shader[selected_shader].uniforms.light_position, this.scene.light.point_lights[j].position);
+                this.gl.uniform3fv(this.shader[selected_shader].uniforms.light_color, this.scene.light.point_lights[j].color);
             }
-            else if (selected_shader == "phong_color")
+
+            if (this.scene.models[i].shader == 'texture')
             {
-                this.gl.uniform3fv(this.shader[selected_shader].uniforms.material_specular, this.scene.models[i].material.specular);
-                this.gl.uniform3fv(this.shader[selected_shader].uniforms.light_ambient, this.scene.light.ambient);
-                this.gl.uniform3fv(this.shader[selected_shader].uniforms.camera_position, this.scene.camera.position);
-                this.gl.uniform1f(this.shader[selected_shader].uniforms.material_shininess, this.scene.models[i].material.shininess);
-                for (let j = 0; j < this.scene.light.point_lights.length; j ++)
-                {
-                    this.gl.uniform3fv(this.shader[selected_shader].uniforms.light_position, this.scene.light.point_lights[j].position);
-                    this.gl.uniform3fv(this.shader[selected_shader].uniforms.light_color, this.scene.light.point_lights[j].color);
-                }
+                //initialize texture
+                let texture = this.initializeTexture(this.scene.models[i].texture.url);
+
+                //rebind
+                this.gl.activeTexture(this.gl.TEXTURE0);
+                this.gl.bindTexture(this.gl.TEXTURE_2D, texture);
+                
+                //upload tex coord
+                // let vertexTexBuffer = this.gl.createBuffer();
+                // this.gl.bindBuffer(this.gl.ARRAY_BUFFER, vertexTexBuffer);
+                
+                // this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(this.shader[selected_shader]), this.gl.STATIC_DRAW);
+                // this.gl.enableVertexAttribArray(this.shader[selected_shader].vertex_texcoord_attrib);
+                // this.gl.vertexAttribPointer(this.shader[selected_shader].vertex_texcoord_attrib, 2, this.gl.FLOAT, false, 0, 0);
+
+                //upload uniform
+                this.gl.uniform1i(this.shader[selected_shader].uniforms.image, 0);
+                this.gl.uniform2fv(this.shader[selected_shader].uniforms.texture_scale, this.scene.models[i].texture.scale);
+
+                //unbind
+                this.gl.bindTexture(this.gl.TEXTURE_2D, null);
             }
 
             this.gl.bindVertexArray(this.vertex_array[this.scene.models[i].type]);
