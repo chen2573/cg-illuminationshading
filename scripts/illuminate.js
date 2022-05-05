@@ -216,25 +216,25 @@ class GlApp {
             //point lights uniforms
             let positions = new Array(30);
             let colors = new Array(30);
-            for (let j = 0; j < 10; j ++)
+            for (let j=0; j<10; j++)
             {
                 if (this.scene.light.point_lights[j] != undefined)
                 {
-                    positions[j+0] = this.scene.light.point_lights[j].position[0];
-                    positions[j+1] = this.scene.light.point_lights[j].position[1];
-                    positions[j+2] = this.scene.light.point_lights[j].position[2];
-                    colors[j+0] = this.scene.light.point_lights[j].color[0];
-                    colors[j+1] = this.scene.light.point_lights[j].color[1];
-                    colors[j+2] = this.scene.light.point_lights[j].color[2];
+                    positions[j*3+0] = this.scene.light.point_lights[j].position[0];
+                    positions[j*3+1] = this.scene.light.point_lights[j].position[1];
+                    positions[j*3+2] = this.scene.light.point_lights[j].position[2];
+                    colors[j*3+0] = this.scene.light.point_lights[j].color[0];
+                    colors[j*3+1] = this.scene.light.point_lights[j].color[1];
+                    colors[j*3+2] = this.scene.light.point_lights[j].color[2];
                 }
                 else
                 {
-                    positions[j+0] = 0.0;
-                    positions[j+1] = 0.0;
-                    positions[j+2] = 0.0;
-                    colors[j+0] = 0.0;
-                    colors[j+1] = 0.0;
-                    colors[j+2] = 0.0;
+                    positions[j*3+0] = 0.0;
+                    positions[j*3+1] = 0.0;
+                    positions[j*3+2] = 0.0;
+                    colors[j*3+0] = 0.0;
+                    colors[j*3+1] = 0.0;
+                    colors[j*3+2] = 0.0;
                 }
             }
             this.gl.uniform3fv(this.shader[selected_shader].uniforms['light_position[0]'], positions);
