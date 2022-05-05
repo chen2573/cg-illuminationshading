@@ -18,8 +18,8 @@ out vec4 FragColor;
 void main() {
 
     //normalized diretions and normals
-    vec3 N = frag_normal;
-    vec3 L = light_position - frag_pos;
+    vec3 N = normalize(frag_normal);
+    vec3 L = normalize(light_position - frag_pos);
     float NDotL = dot(N, L);
     if (NDotL < 0.0) {NDotL = 0.0;} //cap the dot product at 0
 
