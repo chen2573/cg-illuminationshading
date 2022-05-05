@@ -15,5 +15,7 @@ out vec4 FragColor;
 
 void main() {
     //add texture and lighting
-    FragColor = texture(image, frag_texcoord) * vec4(ambient * material_color + diffuse * material_color + specular * material_specular, 1);
+    FragColor = vec4(vec3(texture(image, frag_texcoord)) * ambient * material_color +
+                     vec3(texture(image, frag_texcoord)) * diffuse * material_color +
+                     vec3(texture(image, frag_texcoord)) * specular * material_specular, 1);
 }

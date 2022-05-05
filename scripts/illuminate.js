@@ -214,24 +214,31 @@ class GlApp {
             this.gl.uniform1f(this.shader[selected_shader].uniforms.material_shininess, this.scene.models[i].material.shininess);
             
             //point lights uniforms
-            let positions = new Array(10);
-            let colors = new Array(10);
+            let positions = new Array(30);
+            let colors = new Array(30);
             for (let j = 0; j < 10; j ++)
             {
                 if (this.scene.light.point_lights[j] != undefined)
                 {
-                    positions[j] = this.scene.light.point_lights[j].position;
-                    colors[j] = this.scene.light.point_lights[j].color;
+                    positions[j+0] = this.scene.light.point_lights[j].position[0];
+                    positions[j+1] = this.scene.light.point_lights[j].position[1];
+                    positions[j+2] = this.scene.light.point_lights[j].position[2];
+                    colors[j+0] = this.scene.light.point_lights[j].color[0];
+                    colors[j+1] = this.scene.light.point_lights[j].color[1];
+                    colors[j+2] = this.scene.light.point_lights[j].color[2];
                 }
                 else
                 {
-                    
-                    positions[j] = vec3.fromValues(0.0, 0.0, 0.0);
-                    colors[j] = vec3.fromValues(0.0, 0.0, 0.0);
+                    positions[j+0] = 0.0;
+                    positions[j+1] = 0.0;
+                    positions[j+2] = 0.0;
+                    colors[j+0] = 0.0;
+                    colors[j+1] = 0.0;
+                    colors[j+2] = 0.0;
                 }
             }
-            this.gl.uniform3fv(this.shader[selected_shader].uniforms['light_position'], positions[0]);
-            this.gl.uniform3fv(this.shader[selected_shader].uniforms['light_color'], colors[0]);
+            this.gl.uniform3fv(this.shader[selected_shader].uniforms['light_position[0]'], positions);
+            this.gl.uniform3fv(this.shader[selected_shader].uniforms['light_color[0]'], colors);
             
 
             //texture uniforms

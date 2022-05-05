@@ -27,21 +27,25 @@ void main(){
     specular = vec3(0.0, 0.0, 0.0);
 
     //loop through lights
-    for (int i=0; i<10; i++)
+    for (int i=0; i<2; i++)
     {    
-        //normalized diretions and normals
-        vec3 N = normalize(vec3(transpose(inverse(model_matrix)) * vec4(vertex_normal, 1.0)));
-        vec3 L = normalize(light_position[i] - vec3(model_matrix * vec4(vertex_position, 1.0)));
-        float NDotL = dot(N, L);
-        if (NDotL < 0.0) {NDotL = 0.0;} //cap the dot product at 0
+        if (light_color[i] != vec3(0.0, 0.0, 0.0))
+        {
+            //normalized diretions and normals
+            vec3 N = normalize(vec3(transpose(inverse(model_matrix)) * vec4(vertex_normal, 1.0)));
+            vec3 L = normalize(vec3(light_position[i]) - vec3(model_matrix * vec4(vertex_position, 1.0)));
+            float NDotL = dot(N, L);
+            if (NDotL < 0.0) {NDotL = 0.0;} //cap the dot product at 0
 
-        vec3 R = normalize(vec3(2, 2, 2) * NDotL * N - L);
-        vec3 V = normalize(camera_position - vec3(model_matrix * vec4(vertex_position, 1.0)));
-        float RDotV = dot(R, V);
-        if (RDotV < 0.0) {RDotV = 0.0;} //cap the dot product at 0
+            vec3 R = normalize(vec3(2, 2, 2) * NDotL * N - L);
+            vec3 V = normalize(camera_position - vec3(model_matrix * vec4(vertex_position, 1.0)));
+            float RDotV = dot(R, V);
+            if (RDotV < 0.0) {RDotV = 0.0;} //cap the dot product at 0
 
-        //update lights
-        diffuse = diffuse + light_color[i] * NDotL;
-        specular = specular + light_color[i] * pow(RDotV, material_shininess);
+
+            //update lights
+            diffuse = diffuse + (vec3(light_color[i]) * NDotL);
+            specular = specular + (vec3(light_color[i]) * pow(RDotV, material_shininess));
+        }
     }
 }

@@ -6,8 +6,8 @@ in vec3 frag_pos;
 in vec3 frag_normal;
 
 uniform vec3 light_ambient;
-uniform vec3 light_position;
-uniform vec3 light_color;
+uniform vec3 light_position[10];
+uniform vec3 light_color[10];
 uniform vec3 camera_position;
 uniform vec3 material_color;      // Ka and Kd
 uniform vec3 material_specular;   // Ks
@@ -16,10 +16,9 @@ uniform float material_shininess; // n
 out vec4 FragColor;
 
 void main() {
-
     //normalized diretions and normals
     vec3 N = normalize(frag_normal);
-    vec3 L = normalize(light_position - frag_pos);
+    vec3 L = normalize(light_position[0] - frag_pos);
     float NDotL = dot(N, L);
     if (NDotL < 0.0) {NDotL = 0.0;} //cap the dot product at 0
 
@@ -28,10 +27,10 @@ void main() {
     float RDotV = dot(R, V);
     if (RDotV < 0.0) {RDotV = 0.0;} //cap the dot product at 0
     
-    vec3 light_diffuse = light_color * NDotL;
-    vec3 light_specular = light_color * pow(RDotV, material_shininess);
+    vec3 light_diffuse = light_color[0] * NDotL;
+    vec3 light_specular = light_color[0] * pow(RDotV, material_shininess);
     
-    FragColor = vec4((light_ambient * material_color) + (light_diffuse * material_color) + light_specular, 1.0);
+    FragColor = vec4((light_ambient * material_color) + (light_diffuse * material_color) + light_specular * material_specular, 1.0);
 }
 
     
