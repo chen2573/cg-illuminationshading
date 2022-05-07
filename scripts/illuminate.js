@@ -131,15 +131,12 @@ class GlApp {
     
         this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MAG_FILTER, this.gl.LINEAR);
         this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MIN_FILTER, this.gl.LINEAR);
-        this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_WRAP_S, this.gl.CLAMP_TO_EDGE);
-        this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_WRAP_T, this.gl.CLAMP_TO_EDGE);
+        this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_WRAP_S, this.gl.REPEAT);
+        this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_WRAP_T, this.gl.REPEAT);
     
-        let pix = [255, 255, 255, 255,
-                   255, 255, 255, 255,
-                   255, 255, 255, 255,
-                   255, 255, 255, 255];   //dummy texture
+        let pix = [255, 255, 255, 255];   //dummy texture
     
-        this.gl.texImage2D(this.gl.TEXTURE_2D, 0, this.gl.RGBA, 2, 2, 0, this.gl.RGBA, this.gl.UNSIGNED_BYTE, new Uint8Array(pix));  //bind dummy texture
+        this.gl.texImage2D(this.gl.TEXTURE_2D, 0, this.gl.RGBA, 1, 1, 0, this.gl.RGBA, this.gl.UNSIGNED_BYTE, new Uint8Array(pix));  //bind dummy texture
         this.gl.bindTexture(this.gl.TEXTURE_2D, null);    //unbind
 
         // download the actual image
@@ -159,6 +156,7 @@ class GlApp {
         this.gl.bindTexture(this.gl.TEXTURE_2D, texture);
         this.gl.texImage2D(this.gl.TEXTURE_2D, 0, this.gl.RGBA, this.gl.RGBA, this.gl.UNSIGNED_BYTE, image_element);  //bind image
         this.gl.bindTexture(this.gl.TEXTURE_2D, null);    //unbind        
+        this.render();
     }
 
     render() {
@@ -245,32 +243,22 @@ class GlApp {
             if (this.scene.models[i].shader == 'texture')
             {
                 //initialize texture
-                let texture = this.initializeTexture(this.scene.models[i].texture.url);
+                // let texture = this.initializeTexture(this.scene.models[i].texture.url);
 
                 //rebind
                 this.gl.activeTexture(this.gl.TEXTURE0);
-                this.gl.bindTexture(this.gl.TEXTURE_2D, texture);
-                
-                //upload tex coord
-                // let vertexTexBuffer = this.gl.createBuffer();
-                // this.gl.bindBuffer(this.gl.ARRAY_BUFFER, vertexTexBuffer);
-                
-                // this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(this.shader[selected_shader]), this.gl.STATIC_DRAW);
-                // this.gl.enableVertexAttribArray(this.shader[selected_shader].vertex_texcoord_attrib);
-                // this.gl.vertexAttribPointer(this.shader[selected_shader].vertex_texcoord_attrib, 2, this.gl.FLOAT, false, 0, 0);
+                this.gl.bindTexture(this.gl.TEXTURE_2D, this.scene.models[i].texture.id);
 
                 //upload uniform
                 this.gl.uniform1i(this.shader[selected_shader].uniforms.image, 0);
                 this.gl.uniform2fv(this.shader[selected_shader].uniforms.texture_scale, this.scene.models[i].texture.scale);
-
-                //unbind
-                this.gl.bindTexture(this.gl.TEXTURE_2D, null);
             }
 
             //binding
             this.gl.bindVertexArray(this.vertex_array[this.scene.models[i].type]);
             this.gl.drawElements(this.gl.TRIANGLES, this.vertex_array[this.scene.models[i].type].face_index_count, this.gl.UNSIGNED_SHORT, 0);
             this.gl.bindVertexArray(null);
+            this.gl.bindTexture(this.gl.TEXTURE_2D, null);
         }
 
 
