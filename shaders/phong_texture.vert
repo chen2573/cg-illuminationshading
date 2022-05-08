@@ -20,4 +20,6 @@ void main() {
     frag_pos = vec3(model_matrix * vec4(vertex_position, 1.0));
     frag_normal = inverse(transpose(mat3(model_matrix))) * vertex_normal;
     frag_texcoord = vertex_texcoord * texture_scale;
+    frag_pos = vec3(model_matrix * vec4(vertex_position, 1.0));
+    frag_normal = inverse(transpose(mat3(model_matrix))) * vertex_normal;
 }
