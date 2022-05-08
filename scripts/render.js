@@ -130,7 +130,7 @@ function init() {
     glapp = new GlApp('view', 800, 600, scene.$data);
     for (let i = 0; i < scene.models.length; i++) {
         if (scene.models[i].shader === 'texture') {
-            scene.models[i].texture.id = glapp.initializeTexture(scene.models[i].texture.url);
+            scene.models[i].texture.id = glapp.initializeTexture("../Images/Checkerboard.jpg");
         }
     }
 
